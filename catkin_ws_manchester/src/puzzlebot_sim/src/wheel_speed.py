@@ -3,12 +3,12 @@
 import rospy
 from geometry_msgs.msg import  Twist
 from std_msgs.msg import Float32
-
+from puzzlebot_info import *
 
 class wheel_model:
     def __init__(self):
-        self.L = 0.191
-        self.R = 0.05
+        self.L = L
+        self.R = R
         self.v = 0.0
         self.w = 0.0
 

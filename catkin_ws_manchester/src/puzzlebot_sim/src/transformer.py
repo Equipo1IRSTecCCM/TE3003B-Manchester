@@ -5,7 +5,9 @@ import tf
 import tf2_ros
 from tf.transformations import quaternion_from_euler
 from geometry_msgs.msg import PoseStamped, Twist, TransformStamped, Quaternion
+from nav_msgs.msg import Odometry
 import numpy as np
+from puzzlebot_info import *
 
 
 class tf_model:
@@ -13,9 +15,10 @@ class tf_model:
         self.x = 0.0
         self.y = 0.0
         self.quat = Quaternion(*quaternion_from_euler(0,0,0))
-        self.R = 0.05
+        self.R = R
         rospy.init_node('puzzlebot_tf')
         self.sub_pose = rospy.Subscriber('/pose_sim', PoseStamped, self.pose_cb)
+        self.sub_odom = rospy.Subscriber('/odom', Odometry, self.odom_cb)
         #self.publish_static()
         self.tf_broadcaster = tf.TransformBroadcaster()
     
@@ -24,6 +27,10 @@ class tf_model:
         self.x = msg.pose.position.x 
         self.y = msg.pose.position.y 
         self.quat = msg.pose.orientation
+    def odom_cb(self, msg):
+        self.x = msg.pose.pose.position.x 
+        self.y = msg.pose.pose.position.y 
+        self.quat = msg.pose.pose.orientation
     
     def run(self):
         dt = 0.1
