@@ -1,1 +1,3 @@
 catkin_ws_manchester/.catkin_workspace
+catkin_ws_manchester/build/
+catkin_ws_manchester/devel/

@@ -48,4 +48,5 @@ class k_model:
 
 if __name__ == "__main__":
     model = k_model()
+    time.sleep(3)
     model.run_move()
