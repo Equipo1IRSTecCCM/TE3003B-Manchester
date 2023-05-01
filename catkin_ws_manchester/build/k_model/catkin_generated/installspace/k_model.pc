@@ -1,0 +1,8 @@
+prefix=/home/samantha/TE3003B-Manchester/catkin_ws_manchester/install
+
+Name: k_model
+Description: Description of k_model
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 

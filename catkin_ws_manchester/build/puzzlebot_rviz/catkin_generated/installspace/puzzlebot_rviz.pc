@@ -1,0 +1,8 @@
+prefix=/home/samantha/TE3003B-Manchester/catkin_ws_manchester/install
+
+Name: puzzlebot_rviz
+Description: Description of puzzlebot_rviz
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 

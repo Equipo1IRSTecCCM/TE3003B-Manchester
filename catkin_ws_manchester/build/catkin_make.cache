@@ -1,0 +1,2 @@
+k_model:puzzlebot_control:puzzlebot_gazebo:puzzlebot_rviz:puzzlebot_sim:puzzlebot_world
+-DCATKIN_DEVEL_PREFIX=/home/samantha/TE3003B-Manchester/catkin_ws_manchester/devel -DCMAKE_INSTALL_PREFIX=/home/samantha/TE3003B-Manchester/catkin_ws_manchester/install -G Unix Makefiles
