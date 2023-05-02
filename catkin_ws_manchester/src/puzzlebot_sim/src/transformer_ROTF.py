@@ -21,7 +21,7 @@ class tf_model:
         self.position = Pose()
         self.position.orientation = self.quat
         
-        
+        self.pub_odom_g = rospy.Publisher('/odom_gazebo', Odometry, queue_size=10)
         self.sub_odom = rospy.Subscriber('/odom', Odometry, self.odom_cb)
         self.sub_pose_g = rospy.Subscriber("/gazebo/model_states", ModelStates, self.gazebo_cb)
         self.tf_broadcaster = tf.TransformBroadcaster()
@@ -32,8 +32,11 @@ class tf_model:
         self.quat = msg.pose.pose.orientation
 
     def gazebo_cb(self,msg):
-        puzzlebot_index = msg.name.index("puzzlebot")
-        self.position = msg.pose[puzzlebot_index]
+        try:
+            puzzlebot_index = msg.name.index("puzzlebot")
+            self.position = msg.pose[puzzlebot_index]
+        except:
+            pass
     
     def run(self):
         dt = 0.1
@@ -62,6 +65,13 @@ class tf_model:
             gaz_trans.transform.translation.z = self.position.position.z
             gaz_trans.transform.rotation = self.position.orientation
             self.tf_broadcaster.sendTransformMessage(gaz_trans)
+
+            gaz_odom = Odometry()
+            gaz_odom.pose.pose.position.x = self.position.position.x
+            gaz_odom.pose.pose.position.y = self.position.position.y
+            gaz_odom.pose.pose.position.z = self.position.position.z
+            gaz_odom.pose.pose.orientation = self.position.orientation
+            self.pub_odom_g.publish(gaz_odom)
             rate.sleep()
 
 if __name__ == "__main__":

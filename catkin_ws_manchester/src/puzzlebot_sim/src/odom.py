@@ -13,8 +13,8 @@ from puzzlebot_info import *
 
 class covariance_generator:
     def __init__(self):
-        self.kr = 0.2
-        self.kl = 0.2
+        self.kr = 1.0
+        self.kl = 1.8
 
         self.wl = 0.0
         self.wr = 0.0
@@ -32,12 +32,11 @@ class covariance_generator:
         x = 0
         y = 1
         theta = 2
-        gra_wk = 0.5 * R * dt * np.array([[np.cos(sk_1[theta]), np.cos(sk_1[theta])],[np.sin(sk_1[theta]), np.sin(sk_1[theta])],[2.0/L, -2.0/L]],dtype=float)
-        self.sigma_delta = np.array([[self.kr * abs(self.wr), 0], [0, self.kl * abs(self.wl)]],dtype=float)
-        self.Q = np.matmul(gra_wk,self.sigma_delta)
-        self.Q = np.matmul(self.Q, gra_wk.T)
+        gra_wk = 0.5 * R * dt * np.array([[np.cos(sk_1[theta]), np.cos(sk_1[theta])],[np.sin(sk_1[theta]), np.sin(sk_1[theta])],[2.0/L, -2.0/L]])
+        self.sigma_delta = np.array([[self.kr * abs(self.wr), 0.0], [0.0, self.kl * abs(self.wl)]])
+        self.Q = np.matmul(np.matmul(gra_wk,self.sigma_delta), gra_wk.T)
         
-        self.H = np.array([[1,0, -dt * v * np.sin(sk_1[theta])],[0,1,dt * v * np.cos(sk_1[theta])],[0,0,1]],dtype=float)
+        self.H = np.array([[1.0,0.0, -dt * v * np.sin(sk_1[theta])],[0.0,1.0,dt * v * np.cos(sk_1[theta])],[0.0,0.0,1.0]])
 
         self.sigma = np.matmul(np.matmul(self.H, self.sigma),self.H.T) + self.Q
         
@@ -70,8 +69,13 @@ class k_model:
     
     def run(self):
         dt = 0.1
+        past_t = rospy.Time.now()
+        
         rate = rospy.Rate(1/dt)
+        rate.sleep()
         while not rospy.is_shutdown():
+            now_t = rospy.Time.now()
+            dt = (now_t - past_t).to_sec()
             self.w = R * (self.wr - self.wl) / L
             self.v = R * (self.wr + self.wl) * 0.5
             
@@ -79,11 +83,10 @@ class k_model:
             self.x += self.v * np.cos(self.th) * dt
             self.y += self.v * np.sin(self.th) * dt
             sigma = self.cov.get_cov(self.wl,self.wr,self.v,[self.x,self.y,self.th],dt)
-            present_time = rospy.Time.now()
             o = Odometry()
             o.header.frame_id = "map"
             o.child_frame_id = "base_link"
-            o.header.stamp = present_time
+            o.header.stamp = now_t
             o.pose.pose.position.x = self.x
             o.pose.pose.position.y = self.y
 
@@ -100,6 +103,7 @@ class k_model:
             o.twist.twist.linear.x = self.v
             o.twist.twist.angular.z = self.w
             self.pub_odom.publish(o)
+            past_t = now_t
             rate.sleep()
 
 if __name__ == "__main__":

@@ -5,3 +5,5 @@ catkin_ws_manchester/src/puzzlebot_sim/src/__pycache__/puzzlebot_info.cpython-38
 catkin_ws_manchester/src/puzzlebot_sim/src/r.csv
 catkin_ws_manchester/src/puzzlebot_sim/src/results.csv
 catkin_ws_manchester/src/puzzlebot_sim/src/save_results.py
+catkin_ws_manchester/src/puzzlebot_sim/src/odom.py
+catkin_ws_manchester/src/puzzlebot_rviz/launch/run_test.launch
