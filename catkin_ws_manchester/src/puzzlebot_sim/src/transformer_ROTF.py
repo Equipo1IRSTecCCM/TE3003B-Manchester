@@ -32,8 +32,11 @@ class tf_model:
         self.quat = msg.pose.pose.orientation
 
     def gazebo_cb(self,msg):
-        puzzlebot_index = msg.name.index("puzzlebot")
-        self.position = msg.pose[puzzlebot_index]
+        try:
+            puzzlebot_index = msg.name.index("puzzlebot")
+            self.position = msg.pose[puzzlebot_index]
+        except:
+            pass
     
     def run(self):
         dt = 0.1
