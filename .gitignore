@@ -1,1 +1,7 @@
 catkin_ws_manchester/.catkin_workspace
+catkin_ws_manchester/build/
+catkin_ws_manchester/devel/
+catkin_ws_manchester/src/puzzlebot_sim/src/__pycache__/puzzlebot_info.cpython-38.pyc
+catkin_ws_manchester/src/puzzlebot_sim/src/r.csv
+catkin_ws_manchester/src/puzzlebot_sim/src/results.csv
+catkin_ws_manchester/src/puzzlebot_sim/src/save_results.py

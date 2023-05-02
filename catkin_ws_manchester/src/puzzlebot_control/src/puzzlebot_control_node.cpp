@@ -85,8 +85,6 @@ int main(int arc, char ** argv)
         msg_wr.data = w_r;
         msg_wl.data = w_l;
 
-        pub_wl.publish(msg_wl);
-        pub_wr.publish(msg_wr);
 
         loop_rate.sleep();
     }

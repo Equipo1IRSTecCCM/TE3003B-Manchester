@@ -20,8 +20,7 @@ class k_model:
         rospy.init_node('puzzlebot_sim')
         self.pub_pose = rospy.Publisher('/pose_sim', PoseStamped, queue_size=10)
         self.sub = rospy.Subscriber('/cmd_vel', Twist, self.cmd_cb)
-        #self.publish_static()
-        self.tf_broadcaster = tf.TransformBroadcaster()
+
     
     
     def cmd_cb(self, msg):
@@ -47,17 +46,6 @@ class k_model:
             quat = Quaternion(*quaternion_from_euler(0,0,self.th))
             p.pose.orientation = quat
             self.pub_pose.publish(p)
-
-            # first, we'll publish the transform over tf
-            pose_trans = TransformStamped()
-            pose_trans.header.stamp = present_time
-            pose_trans.header.frame_id = "map"
-            pose_trans.child_frame_id = "base_link"
-
-            pose_trans.transform.translation.x = self.x
-            pose_trans.transform.translation.y = self.y
-            pose_trans.transform.rotation = quat
-            self.tf_broadcaster.sendTransformMessage(pose_trans)
             rate.sleep()
 
 if __name__ == "__main__":
