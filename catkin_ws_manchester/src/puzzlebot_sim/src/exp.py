@@ -13,10 +13,9 @@ class k_model:
         self.th = 0.1
         rospy.init_node('puzz')
         self.pub_cmd = rospy.Publisher('/cmd_vel', Twist, queue_size=10)
-        self.sub_pose = rospy.Subscriber('/pose_sim', PoseStamped, self.get_pose)
     
-    def get_pose(self,msg):
-        self.th = euler_from_quaternion([msg.pose.orientation.x,msg.pose.orientation.y,msg.pose.orientation.z,msg.pose.orientation.w])[2]
+    
+    
     def run_rotate(self):
         if not rospy.is_shutdown():
             t = Twist()
@@ -49,4 +48,4 @@ class k_model:
 if __name__ == "__main__":
     model = k_model()
     time.sleep(3)
-    model.run_move()
+    model.run_rotate()

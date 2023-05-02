@@ -5,6 +5,7 @@
   <arg name="gui" default="true"/>
   <arg name="headless" default="true"/>
   <arg name="debug" default="false"/>
+  <arg name="prefix" default=""/>
 
   <!-- We resume the logic in empty_world.launch, changing only the name of the world to be launched -->
   <include file="$(find gazebo_ros)/launch/empty_world.launch">
@@ -25,9 +26,10 @@
     
     <node name="puzzlebot_spawn" pkg="gazebo_ros" type="spawn_model"  output="screen"
           args="-urdf -param robot_description -model puzzlebot -x $(arg x) -y $(arg y) -z $(arg z)" />
-    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" respawn="false" output="screen"/>
-
-  <node name="joint_state_publisher"  pkg="joint_state_publisher" type="joint_state_publisher"/> 
+    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" respawn="false" output="screen">
+      <param name="tf_prefix" value="$(arg prefix)" />
+    </node>
+  <node name="joint_state_publisher_g"  pkg="joint_state_publisher" type="joint_state_publisher"/> 
   <include file="$(find puzzlebot_control)/launch/puzzlebot_control.launch"/>"
   <node name="puzzlebot_controller" pkg="puzzlebot_control" type="puzzlebot_control_node"/>
   

@@ -4,22 +4,44 @@ import rospy
 import tf
 from nav_msgs.msg import Odometry
 from geometry_msgs.msg import TransformStamped, Quaternion
+from tf.transformations import quaternion_from_euler
 from std_msgs.msg import Float32
 from math import cos, sin
 import numpy as np
 from puzzlebot_info import *
 
 
-#!/usr/bin/env python3
+class covariance_generator:
+    def __init__(self):
+        self.kr = 0.2
+        self.kl = 0.2
 
-import rospy
-import tf
-import tf2_ros
-from tf.transformations import quaternion_from_euler
-from nav_msgs.msg import Odometry
-from geometry_msgs.msg import Quaternion
-import numpy as np
+        self.wl = 0.0
+        self.wr = 0.0
 
+        self.mu = np.zeros((3,1),dtype=float)
+        self.sigma = np.zeros((3,3),dtype=float)
+        self.H = np.zeros((3,3),dtype=float)
+
+        self.sigma_delta = np.array([[self.kr * abs(self.wr), 0], [0, self.kl * abs(self.wl)]],dtype=float)
+        self.Q = np.zeros((3,3),dtype=float)
+    
+    def get_cov(self, wl, wr, v, sk_1, dt):
+        self.wl = wl
+        self.wr = wr
+        x = 0
+        y = 1
+        theta = 2
+        gra_wk = 0.5 * R * dt * np.array([[np.cos(sk_1[theta]), np.cos(sk_1[theta])],[np.sin(sk_1[theta]), np.sin(sk_1[theta])],[2.0/L, -2.0/L]],dtype=float)
+        self.sigma_delta = np.array([[self.kr * abs(self.wr), 0], [0, self.kl * abs(self.wl)]],dtype=float)
+        self.Q = np.matmul(gra_wk,self.sigma_delta)
+        self.Q = np.matmul(self.Q, gra_wk.T)
+        
+        self.H = np.array([[1,0, -dt * v * np.sin(sk_1[theta])],[0,1,dt * v * np.cos(sk_1[theta])],[0,0,1]],dtype=float)
+
+        self.sigma = np.matmul(np.matmul(self.H, self.sigma),self.H.T) + self.Q
+        
+        return self.sigma
 
 class k_model:
     def __init__(self):
@@ -30,6 +52,8 @@ class k_model:
         self.w = 0.0
         self.wr = 0.0
         self.wl = 0.0
+
+        self.cov = covariance_generator()
 
         rospy.init_node('puzzlebot_deadReckoning')
         self.pub_odom = rospy.Publisher('/odom', Odometry, queue_size=10)
@@ -54,7 +78,7 @@ class k_model:
             self.th += self.w * dt
             self.x += self.v * np.cos(self.th) * dt
             self.y += self.v * np.sin(self.th) * dt
-
+            sigma = self.cov.get_cov(self.wl,self.wr,self.v,[self.x,self.y,self.th],dt)
             present_time = rospy.Time.now()
             o = Odometry()
             o.header.frame_id = "map"
@@ -65,6 +89,13 @@ class k_model:
 
             quat = Quaternion(*quaternion_from_euler(0,0,self.th))
             o.pose.pose.orientation = quat
+            
+            co = np.zeros((6,6),dtype=float)
+            co[:2,:2] = sigma[:2,:2]
+            co[-1,:2] = sigma[-1,:2]
+            co[:2,-1] = sigma[:2,-1]
+            co[-1,-1] = sigma[-1,-1]
+            o.pose.covariance = co.reshape(36).tolist()
 
             o.twist.twist.linear.x = self.v
             o.twist.twist.angular.z = self.w
