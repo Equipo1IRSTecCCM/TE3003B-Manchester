@@ -1,8 +1,0 @@
-prefix=/home/samantha/TE3003B-Manchester/catkin_ws_manchester/install
-
-Name: puzzlebot_sim
-Description: Description of puzzlebot_sim
-Version: 0.0.0
-Cflags: 
-Libs: -L${prefix}/lib 
-Requires: 
