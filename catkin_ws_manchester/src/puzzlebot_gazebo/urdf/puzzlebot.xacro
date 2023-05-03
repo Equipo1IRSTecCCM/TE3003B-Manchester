@@ -31,6 +31,7 @@
       <origin xyz="0 0 0" rpy="${PI/2} 0 ${PI/2}"/>
           <geometry>
           	 <mesh filename="file://${mesh_chassis}"/>
+			 <!--<mesh filename="file://puzzlebot_gazebo/meshes/chassis_3pisos"/>-->
           </geometry> 
     </visual>
 
@@ -147,7 +148,7 @@
 		          </geometry>-->
  
 		         <!-- with mesh--> 
-		          <origin rpy="${PI/2} 0 ${PI/2}" xyz="0 0 0"/>
+		          <origin rpy="${PI/2} 0 ${(PI/2)+0.01}" xyz="0 0 0"/>
 		          <geometry>
 		          	<mesh filename="file://${mesh_camera}"/>
 		          </geometry>
@@ -204,4 +205,34 @@
       <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
     </actuator>
 </transmission>  
+<!-- Hokuyo Laser -->
+  <link name="hokuyo_link">
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+    <box size="0.1 0.1 0.1"/>
+      </geometry>
+    </collision>
+
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://puzzlebot_gazebo/meshes/hokuyo.dae"/>
+      </geometry>
+    </visual>
+
+    <inertial>
+      <mass value="1e-5" />
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6" />
+    </inertial>
+  </link>
+
+  <joint name="hokuyo_joint" type="fixed">
+    <axis xyz="0 1 0" />
+    <origin xyz="0.06 0 0.101" rpy="0 0 0"/>
+    <parent link="chassis"/>
+    <child link="hokuyo_link"/>
+  </joint>
+
 </robot>
