@@ -20,6 +20,7 @@ class tf_model:
         self.prefix = prefix
         self.position = Pose()
         self.position.orientation = self.quat
+        self.velocity = Twist()
         
         self.pub_odom_g = rospy.Publisher('/odom_gazebo', Odometry, queue_size=10)
         self.sub_odom = rospy.Subscriber('/odom', Odometry, self.odom_cb)
@@ -35,6 +36,7 @@ class tf_model:
         try:
             puzzlebot_index = msg.name.index("puzzlebot")
             self.position = msg.pose[puzzlebot_index]
+            self.velocity = msg.twist[puzzlebot_index]
         except:
             pass
     
@@ -67,14 +69,22 @@ class tf_model:
             self.tf_broadcaster.sendTransformMessage(gaz_trans)
 
             gaz_odom = Odometry()
+            gaz_odom.header.stamp = rospy.Time.now()
+            gaz_odom.header.frame_id = "map"
+            gaz_odom.child_frame_id = "base_link"
             gaz_odom.pose.pose.position.x = self.position.position.x
             gaz_odom.pose.pose.position.y = self.position.position.y
             gaz_odom.pose.pose.position.z = self.position.position.z
             gaz_odom.pose.pose.orientation = self.position.orientation
+            gaz_odom.twist.twist.linear = self.velocity.linear
+            gaz_odom.twist.twist.angular = self.velocity.angular
             self.pub_odom_g.publish(gaz_odom)
             rate.sleep()
 
 if __name__ == "__main__":
-    rospy.init_node('puzzlebot_tf')
-    model = tf_model()
-    model.run()
+    try:
+        rospy.init_node('puzzlebot_tf')
+        model = tf_model()
+        model.run()
+    except rospy.ROSInterruptException:
+        pass

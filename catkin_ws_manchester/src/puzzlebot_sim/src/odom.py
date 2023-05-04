@@ -107,7 +107,10 @@ class k_model:
             rate.sleep()
 
 if __name__ == "__main__":
-    model = k_model()
-    model.run()
+    try:
+        model = k_model()
+        model.run()
+    except rospy.ROSInterruptException:
+        pass
 
 

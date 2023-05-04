@@ -34,5 +34,8 @@ class wheel_model:
             rate.sleep()
 
 if __name__ == "__main__":
-    model = wheel_model()
-    model.run()
+    try:
+        model = wheel_model()
+        model.run()
+    except rospy.ROSInterruptException:
+        pass
