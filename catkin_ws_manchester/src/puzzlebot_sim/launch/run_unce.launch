@@ -1,6 +1,6 @@
 <launch>
   <include file="$(find puzzlebot_rviz)/launch/run_two.launch"/>
-  <node name="puzzlebot_wheel" pkg="puzzlebot_sim" type="wheel_speed.py"/>
+  <node pkg="rosservice" type="rosservice" name="global_loc" args="call --wait /left_wheel_velocity_controller/state" />
   <node name="puzzlebot_odom" pkg="puzzlebot_sim" type="odom.py"/>
   <node name="puzzlebot_tf" pkg="puzzlebot_sim" type="transformer_ROTF.py"/>
 </launch>
