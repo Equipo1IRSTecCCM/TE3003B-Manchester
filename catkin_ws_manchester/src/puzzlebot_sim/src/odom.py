@@ -5,7 +5,7 @@ import tf
 from nav_msgs.msg import Odometry
 from geometry_msgs.msg import TransformStamped, Quaternion
 from tf.transformations import quaternion_from_euler
-from control_msgs.msg import JointControllerState
+from std_msgs.msg import Float64
 from math import cos, sin
 import numpy as np
 from puzzlebot_info import *
@@ -56,16 +56,16 @@ class k_model:
 
         rospy.init_node('puzzlebot_deadReckoning')
         self.pub_odom = rospy.Publisher('/odom', Odometry, queue_size=10)
-        self.wl_sub = rospy.Subscriber('/right_wheel_velocity_controller/state', JointControllerState, self.wr_cb)
-        self.wr_sub = rospy.Subscriber('/left_wheel_velocity_controller/state', JointControllerState, self.wl_cb)
+        self.wl_sub = rospy.Subscriber('/wl', Float64, self.wr_cb)
+        self.wr_sub = rospy.Subscriber('/wr', Float64, self.wl_cb)
 
     
     
     def wr_cb(self, msg):
-        self.wr = msg.process_value
+        self.wr = msg.data
 
     def wl_cb(self, msg):
-        self.wl = msg.process_value
+        self.wl = msg.data
     
     def run(self):
         try:
@@ -112,5 +112,6 @@ class k_model:
 if __name__ == "__main__":
     model = k_model()
     model.run()
+
 
 
