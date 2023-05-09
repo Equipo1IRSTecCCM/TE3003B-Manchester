@@ -1,10 +1,8 @@
 #include <ros/ros.h>
 #include <geometry_msgs/Twist.h>
 #include <std_msgs/Float64.h>
-#include <std_msgs/Float32.h>
 #include <control_msgs/JointControllerState.h>
 #include "puzzlebot_control/Shared.hpp"
-
 
 double v,w,w_r,w_l,prev_wl,prev_wr;
 
@@ -35,8 +33,8 @@ int main(int arc, char ** argv)
     ros::Publisher pub_wl_command = nh.advertise<std_msgs::Float64>(topics["cmd_wL"],100);
     ros::Publisher pub_wr_command = nh.advertise<std_msgs::Float64>(topics["cmd_wR"],100);
 
-    ros::Publisher pub_wl = nh.advertise<std_msgs::Float32>(topics["pub_wl"],100);
-    ros::Publisher pub_wr = nh.advertise<std_msgs::Float32>(topics["pub_wr"],100);
+    ros::Publisher pub_wl = nh.advertise<std_msgs::Float64>(topics["pub_wl"],100);
+    ros::Publisher pub_wr = nh.advertise<std_msgs::Float64>(topics["pub_wr"],100);
 
     ros::Subscriber sub_wr = nh.subscribe(topics["sub_wr"],10,wr_callback);
     ros::Subscriber sub_wl = nh.subscribe(topics["sub_wl"],10,wl_callback);
@@ -81,10 +79,12 @@ int main(int arc, char ** argv)
         pub_wl_command.publish(msgR);
         pub_wr_command.publish(msgL);
 
-        std_msgs::Float32 msg_wr,msg_wl;
-        msg_wr.data = w_r;
-        msg_wl.data = w_l;
+        std_msgs::Float64 msg_wr,msg_wl;
+        msg_wr.data = w_l;
+        msg_wl.data = w_r;
 
+        pub_wl.publish(msg_wl);
+        pub_wr.publish(msg_wr);
 
         loop_rate.sleep();
     }

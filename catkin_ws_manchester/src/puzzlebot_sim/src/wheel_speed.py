@@ -24,14 +24,17 @@ class wheel_model:
         self.w = msg.angular.z
     
     def run(self):
-        dt = 0.1
-        rate = rospy.Rate(1/dt)
-        while not rospy.is_shutdown():
-            wr = (self.v - self.w * self.L / 2.0) / self.R
-            wl = (self.v +  self.w * self.L / 2.0) /self. R
-            self.wl_pub.publish(wl)
-            self.wr_pub.publish(wr)
-            rate.sleep()
+        try:
+            dt = 0.1
+            rate = rospy.Rate(1/dt)
+            while not rospy.is_shutdown():
+                wr = (self.v - self.w * self.L / 2.0) / self.R
+                wl = (self.v +  self.w * self.L / 2.0) /self. R
+                self.wl_pub.publish(wl)
+                self.wr_pub.publish(wr)
+                rate.sleep()
+        except rospy.ROSInterruptException:
+            pass
 
 if __name__ == "__main__":
     model = wheel_model()

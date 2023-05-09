@@ -14,6 +14,7 @@
   </link>
   
   <joint name="base_link_to_chassis" type="fixed">
+	   <origin xyz="-0.05 0 0" rpy="0 0 0"/>
 	   <parent link="base_link"/>
 	   <child link="chassis"/>
   </joint>
@@ -236,3 +237,4 @@
   </joint>
 
 </robot>
+

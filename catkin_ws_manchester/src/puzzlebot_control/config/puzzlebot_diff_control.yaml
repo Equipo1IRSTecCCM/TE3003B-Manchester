@@ -23,6 +23,8 @@
     topics:
       cmd_wR: /right_wheel_velocity_controller/command
       cmd_wL: /left_wheel_velocity_controller/command
+      pub_wr: /wr
+      pub_wl: /wl
       sub_wr: /right_wheel_velocity_controller/state
       sub_wl: /left_wheel_velocity_controller/state
       cmd_vel: /cmd_vel
