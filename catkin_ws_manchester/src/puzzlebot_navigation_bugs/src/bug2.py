@@ -1,3 +1,5 @@
+#! /usr/bin/env python3
+
 # %% [markdown]
 # # Bug2
 # ## Equipo 3
@@ -56,8 +58,8 @@ temp = []
 nfb = False
 ilb = False
 sl = 0
-turnPID = ControlPID(rate_dur,kp = 4)
-fowaPID = ControlPID(rate_dur,kp = 1)
+turnPID = ControlPID(rate_dur,kp = 0.4)
+fowaPID = ControlPID(rate_dur,kp = 0.2,kd = 0.005)
 
 # %% [markdown]
 # Declaramos el callback de Odometría el cual se encarga de dar la posición del robot de acuerdo a sus cálculos de las velocidades hechas en cada motor.
@@ -233,7 +235,7 @@ class Advance(State):
                     vel.angular.z = vel.angular.z if abs(vel.angular.z) <= np.pi/4 else (np.pi/4)*np.sign(vel.angular.z)
                     fowaPID.update(c_vel.linear.x, 0)
                     vel.linear.x = fowaPID.pred
-                    vel.linear.x = vel.linear.x if abs(vel.linear.x) <= 0.2 else 0.2*np.sign(vel.linear.x)*abs(break_v)
+                    vel.linear.x = vel.linear.x if abs(vel.linear.x) <= 0.2 else 0.2*np.sign(vel.linear.x)
                     pub.publish(vel)
                     rate.sleep()
                 if len(puntos) == 0:
@@ -289,15 +291,31 @@ class Turn_so(State):
         global goal
         global temp
         
+        global turnPID
+        global fowaPID
+        
         vel = Twist()
         turnPID.update(c_vel.angular.z, -np.pi/4)
         vel.angular.z = turnPID.pred
+        vel.angular.z = vel.angular.z if abs(vel.angular.z) <= np.pi/4 else (np.pi/4)*np.sign(vel.angular.z)
+        fowaPID.update(c_vel.linear.x, 0)
+        vel.linear.x = fowaPID.pred
+        vel.linear.x = vel.linear.x if abs(vel.linear.x) <= 0.2 else 0.2*np.sign(vel.linear.x)
         pub.publish(vel)
         rate.sleep()
 
         ang = np.arctan2(start[1] - pos.linear.y, start[0] - pos.linear.x) - np.arctan2(goal[1] - pos.linear.y, goal[0] - pos.linear.x)
         if ang < 0.05 and dis(temp, [pos.linear.x,pos.linear.y]) > 0.5:
             temp = []
+            while c_vel.angular.z > 0.05 or c_vel.linear.x > 0.05:
+                    turnPID.update(c_vel.angular.z, 0)
+                    vel.angular.z = turnPID.pred
+                    vel.angular.z = vel.angular.z if abs(vel.angular.z) <= np.pi/4 else (np.pi/4)*np.sign(vel.angular.z)
+                    fowaPID.update(c_vel.linear.x, 0)
+                    vel.linear.x = fowaPID.pred
+                    vel.linear.x = vel.linear.x if abs(vel.linear.x) <= 0.2 else 0.2*np.sign(vel.linear.x)
+                    pub.publish(vel)
+                    rate.sleep()
             return 'turnr'
             
         if not nfb:
@@ -325,18 +343,32 @@ class AdvanceTurn(State):
         global start
         global goal
         global temp
+
+        global turnPID
+        global fowaPID
         
         vel = Twist()
         turnPID.update(c_vel.angular.z, np.pi/4)
         vel.angular.z = turnPID.pred
+        vel.angular.z = vel.angular.z if abs(vel.angular.z) <= np.pi/4 else (np.pi/4)*np.sign(vel.angular.z)
         fowaPID.update(c_vel.linear.x, 0.1)
         vel.linear.x = fowaPID.pred
+        vel.linear.x = vel.linear.x if abs(vel.linear.x) <= 0.2 else 0.2*np.sign(vel.linear.x)
         pub.publish(vel)
         rate.sleep()
 
         ang = np.arctan2(start[1] - pos.linear.y, start[0] - pos.linear.x) - np.arctan2(goal[1] - pos.linear.y, goal[0] - pos.linear.x)
         if ang < 0.05 and dis(temp, [pos.linear.x,pos.linear.y]) > 0.5:
             temp = []
+            while c_vel.angular.z > 0.05 or c_vel.linear.x > 0.05:
+                    turnPID.update(c_vel.angular.z, 0)
+                    vel.angular.z = turnPID.pred
+                    vel.angular.z = vel.angular.z if abs(vel.angular.z) <= np.pi/4 else (np.pi/4)*np.sign(vel.angular.z)
+                    fowaPID.update(c_vel.linear.x, 0)
+                    vel.linear.x = fowaPID.pred
+                    vel.linear.x = vel.linear.x if abs(vel.linear.x) <= 0.2 else 0.2*np.sign(vel.linear.x)
+                    pub.publish(vel)
+                    rate.sleep()
             return 'turnr'
             
         if not nfb:
@@ -364,6 +396,9 @@ class Advance_so(State):
         global start
         global goal
         global temp
+
+        global turnPID
+        global fowaPID
         
         vel = Twist()
         turnPID.update(c_vel.angular.z, sl)
@@ -371,12 +406,22 @@ class Advance_so(State):
         vel.angular.z = vel.angular.z if abs(vel.angular.z) <= np.pi/4 else (np.pi/4)*np.sign(vel.angular.z)
         fowaPID.update(c_vel.linear.x, 0.2)
         vel.linear.x = fowaPID.pred
+        vel.linear.x = vel.linear.x if abs(vel.linear.x) <= 0.2 else 0.2*np.sign(vel.linear.x)
         pub.publish(vel)
         rate.sleep()
 
         ang = np.arctan2(start[1] - pos.linear.y, start[0] - pos.linear.x) - np.arctan2(goal[1] - pos.linear.y, goal[0] - pos.linear.x)
         if ang < 0.05 and dis(temp, [pos.linear.x,pos.linear.y]) > 0.5:
             temp = []
+            while c_vel.angular.z > 0.05 or c_vel.linear.x > 0.05:
+                    turnPID.update(c_vel.angular.z, 0)
+                    vel.angular.z = turnPID.pred
+                    vel.angular.z = vel.angular.z if abs(vel.angular.z) <= np.pi/4 else (np.pi/4)*np.sign(vel.angular.z)
+                    fowaPID.update(c_vel.linear.x, 0)
+                    vel.linear.x = fowaPID.pred
+                    vel.linear.x = vel.linear.x if abs(vel.linear.x) <= 0.2 else 0.2*np.sign(vel.linear.x)
+                    pub.publish(vel)
+                    rate.sleep()
             return 'turnr'
 
         if not nfb:
@@ -429,5 +474,6 @@ if __name__ == '__main__':
         pass
     except KeyboardInterrupt:
         pass
+
 
 
