@@ -62,7 +62,7 @@ temp_goal = []
 dis_r = 0
 dis_l = 0
 wsd = False
-turnPID = ControlPID(rate_dur,kp = 0.4)
+turnPID = ControlPID(rate_dur,kp = 0.8)
 fowaPID = ControlPID(rate_dur,kp = 0.2,kd = 0.005)
 
 # %% [markdown]

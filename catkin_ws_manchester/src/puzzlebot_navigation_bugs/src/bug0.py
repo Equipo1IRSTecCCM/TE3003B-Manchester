@@ -49,9 +49,11 @@ break_v = 0
 turn_b = 0
 pub = rospy.Publisher('/cmd_vel',Twist,queue_size=10)
 rospy.init_node('bug0')
-rate = rospy.Rate(10)
+rate_dur = 10
+rate = rospy.Rate(rate_dur)
+rate_dur = 1/rate_dur
 puntos = []
-turnPID = ControlPID(rate_dur,kp = 0.4)
+turnPID = ControlPID(rate_dur,kp = 0.8)
 fowaPID = ControlPID(rate_dur,kp = 0.2,kd = 0.005)
 
 # %% [markdown]

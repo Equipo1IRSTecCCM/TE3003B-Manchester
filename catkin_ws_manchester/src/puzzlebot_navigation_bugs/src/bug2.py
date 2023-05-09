@@ -58,7 +58,7 @@ temp = []
 nfb = False
 ilb = False
 sl = 0
-turnPID = ControlPID(rate_dur,kp = 0.4)
+turnPID = ControlPID(rate_dur,kp = 0.8)
 fowaPID = ControlPID(rate_dur,kp = 0.2,kd = 0.005)
 
 # %% [markdown]
