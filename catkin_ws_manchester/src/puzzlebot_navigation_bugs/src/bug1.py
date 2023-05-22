@@ -38,7 +38,6 @@ class ControlPID:
         self.ea = ep
         self.pred = current + ep*self.kp + self.i + ed*self.kd
 
-
 # %% [markdown]
 # Luego se declaran variables globales.
 
@@ -62,7 +61,7 @@ temp_goal = []
 dis_r = 0
 dis_l = 0
 wsd = False
-turnPID = ControlPID(rate_dur,kp = 0.8)
+turnPID = ControlPID(rate_dur,kp = 0.4)
 fowaPID = ControlPID(rate_dur,kp = 0.2,kd = 0.005)
 
 # %% [markdown]
@@ -115,26 +114,26 @@ def callbackScan(msg):
     
     if sor == 1:
         #Get only front detected points
-        scan_f = scan[np.r_[-45:0]]
+        scan_f = scan[np.r_[270:360]]
         scan_f = scan_f[~np.isnan(scan_f)]
         scan_f = scan_f[np.isfinite(scan_f)]
 
         #Get only left detected points
-        anglesl = angles[np.r_[45:90]]
-        scan_l = scan[np.r_[45:90]]
+        anglesl = angles[np.r_[450:540]]
+        scan_l = scan[np.r_[450:540]]
         anglesl = anglesl[~np.isnan(scan_l)]
         scan_l = scan_l[~np.isnan(scan_l)]
         anglesl = anglesl[np.isfinite(scan_l)]
         scan_l = scan_l[np.isfinite(scan_l)]
     else:
         #Get only front detected points
-        scan_f = scan[np.r_[0:45]]
+        scan_f = scan[np.r_[360:450]]
         scan_f = scan_f[~np.isnan(scan_f)]
         scan_f = scan_f[np.isfinite(scan_f)]
 
         #Get only left detected points
-        anglesl = angles[np.r_[-90:-45]]
-        scan_l = scan[np.r_[-90:-45]]
+        anglesl = angles[np.r_[180:270]]
+        scan_l = scan[np.r_[180:270]]
         anglesl = anglesl[~np.isnan(scan_l)]
         scan_l = scan_l[~np.isnan(scan_l)]
         anglesl = anglesl[np.isfinite(scan_l)]
@@ -556,6 +555,5 @@ if __name__ == '__main__':
         pass
     except KeyboardInterrupt:
         pass
-
 
 

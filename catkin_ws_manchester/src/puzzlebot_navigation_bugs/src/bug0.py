@@ -49,11 +49,12 @@ break_v = 0
 turn_b = 0
 pub = rospy.Publisher('/cmd_vel',Twist,queue_size=10)
 rospy.init_node('bug0')
-rate_dur = 10
+rate = rospy.Rate(10)
+puntos = []
+rate_dur = 25
 rate = rospy.Rate(rate_dur)
 rate_dur = 1/rate_dur
-puntos = []
-turnPID = ControlPID(rate_dur,kp = 0.8)
+turnPID = ControlPID(rate_dur,kp = 0.4)
 fowaPID = ControlPID(rate_dur,kp = 0.2,kd = 0.005)
 
 # %% [markdown]
@@ -104,8 +105,8 @@ def callbackScan(msg):
     angles = np.arange(ang,andf+inc,inc)
 
     #Get only front detected points
-    angles_f = angles[np.r_[-50:50]]
-    scan_f = scan[np.r_[-50:50]]
+    angles_f = angles[np.r_[260:460]]
+    scan_f = scan[np.r_[260:460]]
     angles_f = angles_f[~np.isnan(scan_f)]
     scan_f = scan_f[~np.isnan(scan_f)]
     angles_f = angles_f[np.isfinite(scan_f)]
