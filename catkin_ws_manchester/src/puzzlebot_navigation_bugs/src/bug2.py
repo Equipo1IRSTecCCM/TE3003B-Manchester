@@ -38,7 +38,6 @@ class ControlPID:
         self.ea = ep
         self.pred = current + ep*self.kp + self.i + ed*self.kd
 
-
 # %% [markdown]
 # Luego se declaran variables globales.
 
@@ -58,7 +57,7 @@ temp = []
 nfb = False
 ilb = False
 sl = 0
-turnPID = ControlPID(rate_dur,kp = 0.8)
+turnPID = ControlPID(rate_dur,kp = 0.4)
 fowaPID = ControlPID(rate_dur,kp = 0.2,kd = 0.005)
 
 # %% [markdown]
@@ -109,13 +108,13 @@ def callbackScan(msg):
     angles = np.arange(ang,andf+inc,inc)
 
     #Get only front detected points
-    scan_f = scan[np.r_[-45:0]]
+    scan_f = scan[np.r_[270:360]]
     scan_f = scan_f[~np.isnan(scan_f)]
     scan_f = scan_f[np.isfinite(scan_f)]
 
     #Get only left detected points
-    anglesl = angles[np.r_[45:90]]
-    scan_l = scan[np.r_[45:90]]
+    anglesl = angles[np.r_[450:540]]
+    scan_l = scan[np.r_[450:540]]
     anglesl = anglesl[~np.isnan(scan_l)]
     scan_l = scan_l[~np.isnan(scan_l)]
     anglesl = anglesl[np.isfinite(scan_l)]
@@ -141,6 +140,7 @@ def callbackGoalPoint(msg):
 
 # %% [markdown]
 # Este es el primer estado el cual envía al robot la velocidad de giro necesaria para alcanzar el ángulo mínimo entre el turtlebot y el punto objetivo, y así iniciar haciendo un recorrido en línea recta.
+# 
 
 # %%
 class Turn(State):
@@ -188,6 +188,7 @@ class Turn(State):
 
 # %% [markdown]
 # El segundo estado consiste en avanzar y corregir el rumbo si se está desviando a partir de un giro muy discreto. Si hay obstaculo aquí se aplica el freno y la desviación.
+# 
 
 # %%
 class Advance(State):
@@ -380,6 +381,7 @@ class AdvanceTurn(State):
 
 # %% [markdown]
 # El estado de avance se activa cuando no hay obstáculo en frente y tiene pared a su izquierda. Para estar paralelo a la pared utiliza la pendiente como error donde 0 sería que está totalmente paralelo.
+# 
 
 # %%
 class Advance_so(State):
@@ -465,6 +467,7 @@ def main():
 
 # %% [markdown]
 # Finalmente, para ejecutar el código oficialmente (sin antes haber ya ejecutado las celdas anteriores y lanzado el mundo de turtlebot en Gazebo), se ejecuta la siguiente celda para iniciar con el proceso:
+# 
 
 # %%
 if __name__ == '__main__':
@@ -474,6 +477,5 @@ if __name__ == '__main__':
         pass
     except KeyboardInterrupt:
         pass
-
 
 
